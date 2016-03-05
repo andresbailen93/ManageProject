@@ -5,12 +5,18 @@
  */
 package mgproject.beans;
 
+import java.util.Collection;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import mgproject.ejb.TaskFacade;
+import mgproject.ejb.UsersFacade;
 import mgproject.entities.Task;
+import mgproject.entities.Users;
 
 /**
  *
@@ -20,6 +26,12 @@ import mgproject.entities.Task;
 @RequestScoped
 public class ManagedTaskBean {
 
+    @ManagedProperty(value = "#{loginBean}")
+    private LoginBean loginBean;
+
+    @EJB
+    private UsersFacade usersFacade;
+
     @EJB
     private TaskFacade taskFacade;
     private String name;
@@ -27,7 +39,51 @@ public class ManagedTaskBean {
     private String priority;
     private int time;
     private String timeType;
+    private List<Task> task_list;
+    private String userid;
+    private boolean taskNoAdded;
+    private Task editTask;
+
+    public boolean isTaskNoAdded() {
+        return taskNoAdded;
+    }
+
+    public void setTaskNoAdded(boolean taskNoAdded) {
+        this.taskNoAdded = taskNoAdded;
+    }
+
     
+    public Task getEditTask() {
+        return editTask;
+    }
+
+    public void setEditTask(Task editTask) {
+        this.editTask = editTask;
+    }
+
+    public LoginBean getLoginBean() {
+        return loginBean;
+    }
+
+    public void setLoginBean(LoginBean loginBean) {
+        this.loginBean = loginBean;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public List<Task> getTask_list() {
+        return task_list;
+    }
+
+    public void setTask_list(List<Task> task_list) {
+        this.task_list = task_list;
+    }
 
     public String getName() {
         return name;
@@ -68,20 +124,61 @@ public class ManagedTaskBean {
     public void setTimeType(String timeType) {
         this.timeType = timeType;
     }
-    
-    
-    
+
     /**
      * Creates a new instance of ManagedTaskBean
      */
     public ManagedTaskBean() {
     }
-    
-    /*public String doAddTask(){
+
+    @PostConstruct
+    public void init() {
+        List<Task> list_task = taskFacade.findTaskByProjectUser(this.loginBean.getProject());
+        Users user = usersFacade.find(this.loginBean.getIdUser());
+        this.task_list = list_task;
+        this.taskNoAdded = false;
+
+    }
+
+    public String doAddTask() {
+        this.taskNoAdded = false;
+        Users user = usersFacade.find(this.userid);
+
+        List<Task> tasksadded = taskFacade.findTaskByNameIdproject(loginBean.getProject(),this.name);
+
         Task addTask = new Task();
         addTask.setName(this.name);
-        
-        
+        addTask.setTime(this.time);
+        addTask.setTimetype(this.timeType);
+        addTask.setPriority(this.priority);
+        addTask.setIdProject(loginBean.getProject());
+
+        if (tasksadded.isEmpty()) {
+            taskFacade.create(addTask);
+            Collection<Users> collectionUser = addTask.getUsersCollection();
+            collectionUser.add(user);
+            taskFacade.edit(addTask);
+            this.task_list.add(addTask);
+        } else {
+            this.taskNoAdded = true;
+        }
         return "project";
-    }*/
+    }
+
+    public String doDeleteTask(Task task) {
+        this.taskNoAdded = false;
+        Task eraseTask = taskFacade.find(task.getIdTask());
+        taskFacade.remove(eraseTask);
+        this.task_list.remove(eraseTask);
+        return "project";
+    }
+
+    public void doPreparetoEdit(Task task) {
+        this.editTask = task;
+    }
+
+    public String doEditTask(Task task) {
+
+        return "project";
+    }
 }

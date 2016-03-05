@@ -6,6 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
       >
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <h:head>
         <meta charset="utf-8"/>
@@ -145,6 +146,7 @@
                                     <i class="ion ion-clipboard"></i>
                                     <h3 class="box-title">To Do List</h3>
                                 </div><!-- /.box-header -->
+<<<<<<< HEAD
                                 <div class="box-body">
                                     <ul class="todo-list">
                                         <li>
@@ -246,6 +248,148 @@
                                 </div>
                             </div>
 
+                                <div>
+                                    <h:outputText value="Esa tarea ya existe" rendered="#{managedTaskBean.taskNoAdded}"  class="alert alert-danger small-margin center-block"/>
+                                </div>
+                                <div class="box-body"><div class="box-body">
+                                        <ul class="todo-list">
+                                            <ui:repeat var="task" value="#{managedTaskBean.task_list}">
+                                                <li>
+                                                    <!-- drag handle -->
+                                                    <span class="handle">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                    </span>
+                                                    <!-- todo text -->
+                                                    <h:outputLabel><h:outputText value="#{task.name}"></h:outputText></h:outputLabel>
+                                                    <!-- Emphasis label -->
+                                                    <small class="label label-danger"><i class="fa fa-clock-o" ></i><h:outputText value=" #{task.time} "/><h:outputText value="#{task.timetype}"/>
+                                                    </small>
+                                                    <!-- General tools such as edit or delete-->
+                                                    <div class="tools">
+                                                        <h:form>
+                                                            <h:outputLabel  onclick="#{managedTaskBean.doPreparetoEdit(task)}"><i class="fa fa-edit" style="color:red;cursor: pointer;" onclick="showEditItem()" ></i></h:outputLabel> 
+                                                            <h:commandLink action="#{managedTaskBean.doDeleteTask(task)}"><i class="fa fa-trash-o" style="color:red;"></i></h:commandLink>
+                                                        </h:form>
+                                                    </div>
+                                                </li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </div><!-- /.box-body -->
+                                    <div class="box-footer clearfix no-border">
+                                        <h:form>
+                                            <h:inputText class="btn btn-default pull-right" onclick="showAddItem()" value="Nueva tarea" />
+                                        </h:form>
+                                    </div>
+                                    <div class="box-body" id="addNewItem" style="display:none">
+                                        <h:form>
+                                            <div class="form-group">
+
+                                                <h:inputText class="form-control" value="#{managedTaskBean.name}" />
+                                            </div>
+                                            <div class="form-group" style="width: 49.6%; display: inline-block">
+                                                <h:inputText class="form-control" a:placeholder="Tiempo" value="#{managedTaskBean.time}"/>
+                                            </div>
+                                            <div class="form-group" style="width: 50%; display: inline-block">
+                                                <h:selectOneMenu id="timeTask" class="form-control" value="#{managedTaskBean.timeType}" >
+                                                    <f:selectItem itemLabel="Unidad de tiempo" itemValue="default" />
+                                                    <f:selectItem itemLabel="Minutos" itemValue="mins" />
+                                                    <f:selectItem itemLabel="Horas" itemValue="hours" />
+                                                    <f:selectItem itemLabel="Días" itemValue="days" />
+                                                    <f:selectItem itemLabel="Semanas" itemValue="weeks" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="form-group" style="width: 49.6%; display: inline-block">
+                                                <h:selectOneMenu id="priorityTask" class="form-control" value="#{managedTaskBean.priority}" required="true">
+                                                    <f:selectItem itemLabel="Prioridad" itemValue="default" />
+                                                    <f:selectItem itemLabel="Acuciante" itemValue="acuciante" />
+                                                    <f:selectItem itemLabel="Repentino" itemValue="repentino" />
+                                                    <f:selectItem itemLabel="Planificación" itemValue="plani" />
+                                                    <f:selectItem itemLabel="accesorio" itemValue="accesorio" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="form-group" style="width: 50%; display: inline-block">
+                                                <h:selectOneMenu id="taskTo" class="form-control" value="#{managedTaskBean.userid}">
+                                                    <f:selectItems value="#{managedTaskBean.loginBean.project.usersCollection}" var="user" itemValue="#{user.idUser}" itemLabel="#{user.nick}" rendered="#{managedTaskBean.loginBean.idUser eq managedTaskBean.loginBean.project.idAdmin}"/>
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="box-footer clearfix">
+                                                <h:commandButton class="btn btn-default pull-right" action="#{managedTaskBean.doAddTask()}" value="Crear"></h:commandButton>
+                                            </div>
+                                        </h:form>
+                                    </div>
+                                    <!-- Edit Task-->
+
+                                    <div class="box-body" id="editItem" style="display:none">
+                                        <h:form>
+                                            <div class="form-group">
+                                                <h:inputText class="form-control" value="#{managedTaskBean.editTask.name}" disabled="true" />
+                                            </div>
+                                            <div class="form-group" style="width: 49.6%; display: inline-block">
+                                                <h:inputText class="form-control" value="#{managedTaskBean.editTask.time}"/>
+                                            </div>
+                                            <div class="form-group" style="width: 50%; display: inline-block">
+                                                <h:selectOneMenu id="timeTask" class="form-control" value="#{managedTaskBean.editTask.timetype}" >
+                                                    <f:selectItem itemLabel="#{managedTaskBean.editTask.timetype}" itemValue="#{managedTaskBean.editTask.timetype}" />
+                                                    <f:selectItem itemLabel="Unidad de tiempo" itemValue="default" />
+                                                    <f:selectItem itemLabel="Minutos" itemValue="mins" />
+                                                    <f:selectItem itemLabel="Horas" itemValue="hours" />
+                                                    <f:selectItem itemLabel="Días" itemValue="days" />
+                                                    <f:selectItem itemLabel="Semanas" itemValue="weeks" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="form-group" style="width: 49.6%; display: inline-block">
+                                                <h:selectOneMenu id="priorityTask" class="form-control" value="#{managedTaskBean.editTask.priority}" required="true">
+                                                    <f:selectItem itemLabel="Prioridad" itemValue="default" />
+                                                    <f:selectItem itemLabel="Acuciante" itemValue="acuciante" />
+                                                    <f:selectItem itemLabel="Repentino" itemValue="repentino" />
+                                                    <f:selectItem itemLabel="Planificación" itemValue="plani" />
+                                                    <f:selectItem itemLabel="accesorio" itemValue="accesorio" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="form-group" style="width: 50%; display: inline-block">
+                                                <h:selectOneMenu id="taskTo" class="form-control" value="#{task.usersCollection}">
+                                                    <f:selectItems value="#{managedTaskBean.editTask.usersCollection}" var ="userBF" itemValue="#{userBF.idUser}" itemLabel="#{userBF.nick}" rendered="#{managedTaskBean.loginBean.idUser ne managedTaskBean.loginBean.project.idAdmin}"/>
+                                                    <f:selectItems value="#{managedTaskBean.loginBean.project.usersCollection}" var="user" itemValue="#{user.idUser}" itemLabel="#{user.nick}" rendered="#{managedTaskBean.loginBean.idUser eq managedTaskBean.loginBean.project.idAdmin}"/>
+
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="box-footer clearfix">
+                                                <h:commandButton class="btn btn-default pull-right" action="#{managedTaskBean.doEditTask(task)}" value="Editar"></h:commandButton>
+                                            </div>
+                                        </h:form>
+                                    </div>
+
+                                </div><!-- /.box -->
+
+
+
+
+                                <!-- quick email widget -->
+                                <div class="box box-info">
+                                    <div class="box-header">
+                                        <i class="fa fa-envelope"></i>
+                                        <h3 class="box-title">Email</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <h:form>
+                                            <div class="form-group">
+                                                <h:inputTextarea value="#{sendEmailToBean.emailto}" class="form-control" id="emailto" a:placeholder="Email to:"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <h:inputTextarea value="#{sendEmailToBean.subject}" class="form-control" id="subject" a:placeholder="Asunto"/>
+                                            </div>
+                                            <div>
+                                                <h:inputTextarea value="#{sendEmailToBean.message}" class="textarea" a:placeholder="Mensaje" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"/>
+                                            </div>
+                                            <div class="box-footer clearfix">
+                                                <h:commandButton action="#{sendEmailToBean.doSendEmailTo()}" class="pull-right btn btn-default" id="sendEmail" value="Enviar"/>
+                                            </div>
+                                        </h:form>
+                                    </div>
+                                </div>
+                            </div>
+>>>>>>> origin/master
                         </section><!-- /.Left col -->
                         <!-- right col (We are only adding the ID to make the widgets sortable)-->
                         <section class="col-lg-5 connectedSortable">
@@ -412,6 +556,3 @@
                                                             document.getElementById('addNewItem').style.display = 'block';
                                                         }
                                                     }
-        </script>
-    </h:body>
-</html>
